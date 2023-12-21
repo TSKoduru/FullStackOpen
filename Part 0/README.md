@@ -1,0 +1,1 @@
+This part provides a theoretical overview about how web pages request data and render themselves. Though not all practices used here may be modern, the general ideas still apply.
