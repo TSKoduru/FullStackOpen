@@ -22,8 +22,8 @@ const CurrentEntries = ({entriesToShow, persons, handlePersonChange}) => {
       <div>
         <h2>Current Entries</h2>
         <div>
-          {entriesToShow.map(person => {return <p key = {person.name}>{person.name} - {person.number} 
-          <button onClick = {() => deleteEntry(persons, person, handlePersonChange)}>Delete</button></p>})}
+          {entriesToShow.map(person => {return <p key = {person.name}>{person.name} - {person.number}   
+          <button onClick = {() => deleteEntry(persons, person, handlePersonChange)}> Delete</button></p>})}
         </div>
         
       </div>
