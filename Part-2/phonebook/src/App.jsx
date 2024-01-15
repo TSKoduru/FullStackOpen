@@ -44,7 +44,7 @@ const App = () => {
         }
         )
         .catch(error => {
-          setErrorMessage(`Information of ${newName} has already been removed from the server`)
+          setErrorMessage('Error adding entry: ' + error.response.data.error)
         })
       }
 

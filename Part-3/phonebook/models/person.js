@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-require('dotenv').config();
+require('dotenv').config()
 
 mongoose.set('strictQuery', false)
 
@@ -11,7 +11,7 @@ console.log('connecting to', url)
 
 mongoose.connect(url)
 
-  .then(result => {
+  .then(() => {
     console.log('connected to MongoDB')
   })
   .catch((error) => {
@@ -19,10 +19,17 @@ mongoose.connect(url)
   })
 
 const personSchema = new mongoose.Schema({
-  content: {
-    name: String,
-    number: String,
+  name: {
+    type: String,
+    required: true,
+    minLength: 3,
   },
+  number: {
+    type: String,
+    required: true,
+    minLength: 8,
+  },
+
 })
 
 personSchema.set('toJSON', {

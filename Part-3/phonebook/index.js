@@ -8,7 +8,7 @@ const Person = require('./models/person')
 app.use(cors())
 
 app.use(morgan(function (tokens, req, res) { // Log requests to the console with morgan
- // Return a string of the response body
+  // Return a string of the response body
   return [
     tokens.method(req, res),
     tokens.url(req, res),
@@ -17,25 +17,25 @@ app.use(morgan(function (tokens, req, res) { // Log requests to the console with
     tokens.res(req, res, 'content-length'), '-',
     tokens['response-time'](req, res), 'ms'
   ].join(' ')
-})) 
+}))
 
 app.use(express.json()) // Parse JSON bodies of requests
 
 const Homepage = (persons) => {
-    let numPeople = persons.length
-    let date = new Date()
-    return (
-        `<div>
+  let numPeople = persons.length
+  let date = new Date()
+  return (
+    `<div>
             <p>Phonebook has info for ${numPeople} people</p>
             <p>${date}</p>
         </div>`
-    )
+  )
 }
 
 app.get('/', (request, response) => {
-    Person.find({}).then(persons => {
-        response.send(Homepage(persons))
-    })
+  Person.find({}).then(persons => {
+    response.send(Homepage(persons))
+  })
 })
 
 app.get('/api/persons', (request, response) => {
@@ -48,25 +48,25 @@ app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id).then(person => {
     response.json(person)
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
     .then(result => {
-      response.status(204).end()
+      response.status(204).json(result).end()
     })
     .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
   if(!body.name || !body.number) {
-        return response.status(400).json({
-            error: 'name or number missing.'
-        })
-    }
+    return response.status(400).json({
+      error: 'name or number missing.'
+    })
+  }
 
   // Add the new person to the mongoDB database
   const toAdd = new Person({
@@ -77,11 +77,11 @@ app.post('/api/persons', (request, response) => {
   toAdd.save().then(savedPerson => {
     response.json(savedPerson)
   })
-  .catch(error => next(error))
-  
+    .catch(error => next(error))
+
 })
 
-app.put('/api/persons/:id', (request, response) => {
+app.put('/api/persons/:id', (request, response, next) => {
   const body = request.body
 
   const person = {
@@ -90,12 +90,14 @@ app.put('/api/persons/:id', (request, response) => {
   }
 
   // Update the person in the mongoDB database
-  Person.findByIdAndUpdate(request.params.id, person, { 
-    context: 'query', 
-    new: true,})
+  Person.findByIdAndUpdate(request.params.id, person, {
+    context: 'query',
+    runValidators: true,
+    new: true, })
     .then(updatedPerson => {
       response.json(updatedPerson)
     })
+    .catch(error => next(error))
 })
 
 
@@ -110,9 +112,9 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted input' })
-  } 
+  }
   else if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: 'Input missing name or number.'})
+    return response.status(400).json({ error: 'Invalid input. ' })
   }
 
   next(error)
