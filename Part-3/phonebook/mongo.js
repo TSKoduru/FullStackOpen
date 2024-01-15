@@ -9,9 +9,8 @@ else{
     process.exit(1)
 }
 
-const password = process.argv[2] // Get password from user 
-
 const URL = process.env.MONGODB_URI
+console.log(URL)
 
 mongoose.set('strictQuery',false)
 mongoose.connect(URL)
